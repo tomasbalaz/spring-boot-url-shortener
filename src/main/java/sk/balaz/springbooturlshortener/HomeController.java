@@ -1,6 +1,5 @@
 package sk.balaz.springbooturlshortener;
 
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +19,7 @@ public class HomeController {
 
   @GetMapping("/")
   public String index(Model model) {
-    List<ShortUrl> shortUrls = shortUrlRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
+    List<ShortUrl> shortUrls = shortUrlRepository.findPublicShortUrls();
     model.addAttribute("shortUrls", shortUrls);
     model.addAttribute("baseUrl", "http://localhost:8080");
     return "index";
