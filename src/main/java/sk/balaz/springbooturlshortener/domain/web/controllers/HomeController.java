@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import sk.balaz.springbooturlshortener.domain.models.CreateShortUrlCmd;
 import sk.balaz.springbooturlshortener.domain.models.ShortUrlDto;
 import sk.balaz.springbooturlshortener.domain.services.ShortUrlService;
 import sk.balaz.springbooturlshortener.domain.web.controllers.dtos.CreateShortUrlForm;
@@ -45,9 +46,14 @@ public class HomeController {
       return "index";
     }
     // TODO implement to logic
+    try {
+      var shortUrlDto = shortUrlService.createShortUrl(new CreateShortUrlCmd(form.originalUrl()));
+      redirectAttributes.addFlashAttribute("successMessage", "Short URL created successfully" +
+        "http://localhost:8080/s/" + shortUrlDto.shortKey());
 
-
-    redirectAttributes.addFlashAttribute("successMessage", "Short URL created successfully");
+    } catch (Exception e) {
+      redirectAttributes.addFlashAttribute("errorMessage", "Failed to create short URL");
+    }
     return  "redirect:/";
   }
 
