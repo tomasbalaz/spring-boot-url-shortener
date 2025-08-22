@@ -1,6 +1,7 @@
 package sk.balaz.springbooturlshortener.domain.services;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import sk.balaz.springbooturlshortener.ApplicationProperties;
 import sk.balaz.springbooturlshortener.domain.entities.ShortUrl;
 import sk.balaz.springbooturlshortener.domain.models.CreateShortUrlCmd;
@@ -13,6 +14,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 public class ShortUrlService {
 
   private final ShortUrlRepository shortUrlRepository;
@@ -33,6 +35,7 @@ public class ShortUrlService {
       .stream().map(entityMapper::toShortUrlDto).toList();
   }
 
+  @Transactional
   public ShortUrlDto createShortUrl(CreateShortUrlCmd cmd) {
     if(properties.validateOriginalUrl()) {
       boolean urlExists = UrlExistenceValidator.isUrlExists(cmd.originalUrl());
