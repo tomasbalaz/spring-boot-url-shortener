@@ -34,6 +34,14 @@ public class ShortUrlService {
   }
 
   public ShortUrlDto createShortUrl(CreateShortUrlCmd cmd) {
+    if(properties.validateOriginalUrl()) {
+      boolean urlExists = UrlExistenceValidator.isUrlExists(cmd.originalUrl());
+      if (!urlExists) {
+        throw new RuntimeException("Invalid URL " + cmd.originalUrl());
+      }
+    }
+
+
     var shortUrl = new ShortUrl();
     shortUrl.setOriginalUrl(cmd.originalUrl());
     shortUrl.setShortKey(generateUniqueShortKey());
