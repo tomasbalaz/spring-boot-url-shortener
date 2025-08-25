@@ -1,4 +1,4 @@
-package sk.balaz.springbooturlshortener.domain.web.controllers;
+package sk.balaz.springbooturlshortener.web.controllers;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,7 +13,7 @@ import sk.balaz.springbooturlshortener.domain.exception.ShortUrlNotFoundExceptio
 import sk.balaz.springbooturlshortener.domain.models.CreateShortUrlCmd;
 import sk.balaz.springbooturlshortener.domain.models.ShortUrlDto;
 import sk.balaz.springbooturlshortener.domain.services.ShortUrlService;
-import sk.balaz.springbooturlshortener.domain.web.controllers.dtos.CreateShortUrlForm;
+import sk.balaz.springbooturlshortener.web.dtos.CreateShortUrlForm;
 
 import jakarta.validation.Valid;
 import java.util.List;
@@ -52,7 +52,6 @@ public class HomeController {
       model.addAttribute("baseUrl", properties.baseUrl());
       return "index";
     }
-    // TODO implement to logic
     try {
       var shortUrlDto = shortUrlService.createShortUrl(new CreateShortUrlCmd(form.originalUrl()));
       redirectAttributes.addFlashAttribute("successMessage", "Short URL created successfully" +

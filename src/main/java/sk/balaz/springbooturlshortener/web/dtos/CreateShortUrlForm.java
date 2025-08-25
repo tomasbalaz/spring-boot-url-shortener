@@ -1,4 +1,4 @@
-package sk.balaz.springbooturlshortener.domain.web.controllers.dtos;
+package sk.balaz.springbooturlshortener.web.dtos;
 
 import jakarta.validation.constraints.NotBlank;
 
