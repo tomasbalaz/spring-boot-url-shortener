@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sk.balaz.springbooturlshortener.ApplicationProperties;
-import sk.balaz.springbooturlshortener.domain.ShortUrlNotFoundException;
+import sk.balaz.springbooturlshortener.domain.exception.ShortUrlNotFoundException;
 import sk.balaz.springbooturlshortener.domain.models.CreateShortUrlCmd;
 import sk.balaz.springbooturlshortener.domain.models.ShortUrlDto;
 import sk.balaz.springbooturlshortener.domain.services.ShortUrlService;
