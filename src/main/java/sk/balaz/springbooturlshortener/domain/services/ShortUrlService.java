@@ -44,8 +44,6 @@ public class ShortUrlService {
         throw new RuntimeException("Invalid URL " + cmd.originalUrl());
       }
     }
-
-
     var shortUrl = new ShortUrl();
     shortUrl.setOriginalUrl(cmd.originalUrl());
     shortUrl.setShortKey(generateUniqueShortKey());
@@ -78,6 +76,7 @@ public class ShortUrlService {
     return sb.toString();
   }
 
+  @Transactional
   public Optional<ShortUrlDto> accessShortUrl(String shortKey) {
     Optional<ShortUrl> shortUrlOptional = shortUrlRepository.findByShortKey(shortKey);
     if (shortUrlOptional.isEmpty()) {
@@ -88,6 +87,8 @@ public class ShortUrlService {
     if (shortUrl.getExpiresAt() != null && shortUrl.getExpiresAt().isBefore(Instant.now())) {
       return Optional.empty();
     }
+    shortUrl.setClickCount(shortUrl.getClickCount() + 1);
+    shortUrlRepository.save(shortUrl);
     return shortUrlOptional.map(entityMapper::toShortUrlDto);
   }
 }
