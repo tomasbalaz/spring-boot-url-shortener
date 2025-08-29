@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sk.balaz.springbooturlshortener.ApplicationProperties;
+import sk.balaz.springbooturlshortener.domain.entities.User;
 import sk.balaz.springbooturlshortener.domain.exception.ShortUrlNotFoundException;
 import sk.balaz.springbooturlshortener.domain.models.CreateShortUrlCmd;
 import sk.balaz.springbooturlshortener.domain.models.ShortUrlDto;
@@ -26,13 +27,23 @@ public class HomeController {
 
   private final ApplicationProperties properties;
 
-  public HomeController(ShortUrlService shortUrlService, ApplicationProperties properties) {
+  private final SecurityUtils securityUtils;
+
+  public HomeController(
+    ShortUrlService shortUrlService,
+    ApplicationProperties properties,
+    SecurityUtils securityUtils
+  ) {
     this.shortUrlService = shortUrlService;
     this.properties = properties;
+    this.securityUtils = securityUtils;
   }
 
   @GetMapping("/")
   public String index(Model model) {
+
+    User currentUser = securityUtils.getCurrentUser();
+
     List<ShortUrlDto> shortUrls = shortUrlService.getAllShortUrls();
     model.addAttribute("shortUrls", shortUrls);
     model.addAttribute("baseUrl", properties.baseUrl());
