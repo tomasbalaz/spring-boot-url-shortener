@@ -12,6 +12,7 @@ import sk.balaz.springbooturlshortener.domain.repositories.ShortUrlRepository;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static java.time.temporal.ChronoUnit.DAYS;
@@ -91,7 +92,7 @@ public class ShortUrlService {
   }
 
   @Transactional
-  public Optional<ShortUrlDto> accessShortUrl(String shortKey) {
+  public Optional<ShortUrlDto> accessShortUrl(String shortKey, Long userId) {
     Optional<ShortUrl> shortUrlOptional = shortUrlRepository.findByShortKey(shortKey);
     if (shortUrlOptional.isEmpty()) {
       return Optional.empty();
@@ -99,6 +100,9 @@ public class ShortUrlService {
     ShortUrl  shortUrl = shortUrlOptional.get();
 
     if (shortUrl.getExpiresAt() != null && shortUrl.getExpiresAt().isBefore(Instant.now())) {
+      return Optional.empty();
+    }
+    if (shortUrl.getIsPrivate() != null && !Objects.equals(shortUrl.getCreatedBy().getId(), userId)) {
       return Optional.empty();
     }
     shortUrl.setClickCount(shortUrl.getClickCount() + 1);
