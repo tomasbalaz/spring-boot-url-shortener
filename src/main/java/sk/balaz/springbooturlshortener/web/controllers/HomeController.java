@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sk.balaz.springbooturlshortener.ApplicationProperties;
-import sk.balaz.springbooturlshortener.domain.entities.User;
 import sk.balaz.springbooturlshortener.domain.exception.ShortUrlNotFoundException;
 import sk.balaz.springbooturlshortener.domain.models.CreateShortUrlCmd;
 import sk.balaz.springbooturlshortener.domain.models.ShortUrlDto;
@@ -41,13 +40,10 @@ public class HomeController {
 
   @GetMapping("/")
   public String index(Model model) {
-
-    User currentUser = securityUtils.getCurrentUser();
-
     List<ShortUrlDto> shortUrls = shortUrlService.getAllShortUrls();
     model.addAttribute("shortUrls", shortUrls);
     model.addAttribute("baseUrl", properties.baseUrl());
-    model.addAttribute("createShortUrlForm", new CreateShortUrlForm(""));
+    model.addAttribute("createShortUrlForm", new CreateShortUrlForm("", false, null));
     return "index";
   }
 
@@ -64,7 +60,13 @@ public class HomeController {
       return "index";
     }
     try {
-      var shortUrlDto = shortUrlService.createShortUrl(new CreateShortUrlCmd(form.originalUrl()));
+      Long userId = securityUtils.getCurrentUserId();
+      var shortUrlDto = shortUrlService.createShortUrl(new CreateShortUrlCmd(
+        form.originalUrl(),
+        form.isPrivate(),
+        form.expirationInDays(),
+        userId
+      ));
       redirectAttributes.addFlashAttribute("successMessage", "Short URL created successfully" +
         properties.baseUrl()+"/s/" + shortUrlDto.shortKey());
 
