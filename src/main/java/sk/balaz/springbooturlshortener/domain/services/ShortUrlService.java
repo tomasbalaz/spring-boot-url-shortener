@@ -1,5 +1,7 @@
 package sk.balaz.springbooturlshortener.domain.services;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sk.balaz.springbooturlshortener.ApplicationProperties;
@@ -37,9 +39,12 @@ public class ShortUrlService {
     this.userRepository = userRepository;
   }
 
-  public List<ShortUrlDto> getAllShortUrls() {
-    return shortUrlRepository.findPublicShortUrls()
-      .stream().map(entityMapper::toShortUrlDto).toList();
+  public List<ShortUrlDto> getAllShortUrls(int pageNo, int pageSize) {
+    pageNo = pageNo > 1 ? pageNo - 1 : 0;
+    PageRequest request = PageRequest.of(pageNo, pageSize, Sort.by("createdAt")
+      .descending());
+    return shortUrlRepository.findPublicShortUrls(request)
+      .map(entityMapper::toShortUrlDto).toList();
   }
 
   @Transactional
