@@ -1,5 +1,6 @@
 package sk.balaz.springbooturlshortener.domain.services;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -8,12 +9,12 @@ import sk.balaz.springbooturlshortener.ApplicationProperties;
 import sk.balaz.springbooturlshortener.domain.entities.ShortUrl;
 import sk.balaz.springbooturlshortener.domain.entities.UserRepository;
 import sk.balaz.springbooturlshortener.domain.models.CreateShortUrlCmd;
+import sk.balaz.springbooturlshortener.domain.models.PagedResult;
 import sk.balaz.springbooturlshortener.domain.models.ShortUrlDto;
 import sk.balaz.springbooturlshortener.domain.repositories.ShortUrlRepository;
 
 import java.security.SecureRandom;
 import java.time.Instant;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -39,12 +40,13 @@ public class ShortUrlService {
     this.userRepository = userRepository;
   }
 
-  public List<ShortUrlDto> getAllShortUrls(int pageNo, int pageSize) {
+  public PagedResult<ShortUrlDto> getAllShortUrls(int pageNo, int pageSize) {
     pageNo = pageNo > 1 ? pageNo - 1 : 0;
     PageRequest request = PageRequest.of(pageNo, pageSize, Sort.by("createdAt")
       .descending());
-    return shortUrlRepository.findPublicShortUrls(request)
-      .map(entityMapper::toShortUrlDto).toList();
+    Page<ShortUrlDto> shortUrlDtoPage = shortUrlRepository.findPublicShortUrls(request)
+      .map(entityMapper::toShortUrlDto);
+    return PagedResult.from(shortUrlDtoPage);
   }
 
   @Transactional

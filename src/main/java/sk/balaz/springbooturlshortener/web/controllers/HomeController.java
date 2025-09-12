@@ -12,12 +12,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sk.balaz.springbooturlshortener.ApplicationProperties;
 import sk.balaz.springbooturlshortener.domain.exception.ShortUrlNotFoundException;
 import sk.balaz.springbooturlshortener.domain.models.CreateShortUrlCmd;
+import sk.balaz.springbooturlshortener.domain.models.PagedResult;
 import sk.balaz.springbooturlshortener.domain.models.ShortUrlDto;
 import sk.balaz.springbooturlshortener.domain.services.ShortUrlService;
 import sk.balaz.springbooturlshortener.web.dtos.CreateShortUrlForm;
 
 import jakarta.validation.Valid;
-import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -43,7 +43,7 @@ public class HomeController {
   public String index(
     @RequestParam(defaultValue = "0") Integer page,
     Model model) {
-    List<ShortUrlDto> shortUrls = shortUrlService.getAllShortUrls(page, properties.pageSize());
+    PagedResult<ShortUrlDto> shortUrls = shortUrlService.getAllShortUrls(page, properties.pageSize());
     model.addAttribute("shortUrls", shortUrls);
     model.addAttribute("baseUrl", properties.baseUrl());
     model.addAttribute("createShortUrlForm", new CreateShortUrlForm("", false, null));
@@ -57,7 +57,7 @@ public class HomeController {
     RedirectAttributes  redirectAttributes,
     Model model) {
     if (bindingResult.hasErrors()) {
-      List<ShortUrlDto> shortUrls = shortUrlService.getAllShortUrls(1, properties.pageSize());
+      PagedResult<ShortUrlDto> shortUrls = shortUrlService.getAllShortUrls(1, properties.pageSize());
       model.addAttribute("shortUrls", shortUrls);
       model.addAttribute("baseUrl", properties.baseUrl());
       return "index";
