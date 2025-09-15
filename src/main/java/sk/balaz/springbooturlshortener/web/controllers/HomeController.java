@@ -39,13 +39,14 @@ public class HomeController {
     this.securityUtils = securityUtils;
   }
 
+  // GET /?page=0&size=10&sort=createdAt,desc
   @GetMapping("/")
   public String index(
     @RequestParam(defaultValue = "0") Integer page,
+//    @PageableDefault(page = 1, size = 10)
+//    Pageable pageable,
     Model model) {
-    PagedResult<ShortUrlDto> shortUrls = shortUrlService.getAllShortUrls(page, properties.pageSize());
-    model.addAttribute("shortUrls", shortUrls);
-    model.addAttribute("baseUrl", properties.baseUrl());
+    addShortUrlsDataToModel(model, page);
     model.addAttribute("createShortUrlForm", new CreateShortUrlForm("", false, null));
     return "index";
   }
@@ -57,9 +58,7 @@ public class HomeController {
     RedirectAttributes  redirectAttributes,
     Model model) {
     if (bindingResult.hasErrors()) {
-      PagedResult<ShortUrlDto> shortUrls = shortUrlService.getAllShortUrls(1, properties.pageSize());
-      model.addAttribute("shortUrls", shortUrls);
-      model.addAttribute("baseUrl", properties.baseUrl());
+      addShortUrlsDataToModel(model, 1);
       return "index";
     }
     try {
@@ -93,6 +92,12 @@ public class HomeController {
   @GetMapping("/login")
   String loginForm() {
     return "login";
+  }
+
+  private void addShortUrlsDataToModel(Model model, int pageNo) {
+    PagedResult<ShortUrlDto> shortUrls = shortUrlService.getAllShortUrls(pageNo, properties.pageSize());
+    model.addAttribute("shortUrls", shortUrls);
+    model.addAttribute("baseUrl", properties.baseUrl());
   }
 
 }
