@@ -2,6 +2,7 @@ package sk.balaz.springbooturlshortener.domain.services;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,12 +42,17 @@ public class ShortUrlService {
   }
 
   public PagedResult<ShortUrlDto> getAllShortUrls(int pageNo, int pageSize) {
-    pageNo = pageNo > 1 ? pageNo - 1 : 0;
-    PageRequest request = PageRequest.of(pageNo, pageSize, Sort.by("createdAt")
-      .descending());
-    Page<ShortUrlDto> shortUrlDtoPage = shortUrlRepository.findPublicShortUrls(request)
+    Pageable pageable = getPageable(pageNo, pageSize);
+    Page<ShortUrlDto> shortUrlDtoPage = shortUrlRepository.findPublicShortUrls(pageable)
       .map(entityMapper::toShortUrlDto);
     return PagedResult.from(shortUrlDtoPage);
+  }
+
+  public PagedResult<ShortUrlDto> getUserShortUrls(Long userId, int page, int pageSize) {
+    Pageable pageable = getPageable(page, pageSize);
+    var shortUrlsPage = shortUrlRepository.findByCreatedById(userId, pageable)
+      .map(entityMapper::toShortUrlDto);
+    return PagedResult.from(shortUrlsPage);
   }
 
   @Transactional
@@ -96,6 +102,11 @@ public class ShortUrlService {
       sb.append(CHARACTERS.charAt(RANDOM.nextInt(CHARACTERS.length())));
     }
     return sb.toString();
+  }
+
+  private Pageable getPageable(int page, int pageSize) {
+    page = page > 1 ? page - 1 : 0;
+    return PageRequest.of(page, pageSize,Sort.Direction.DESC, "createdAt");
   }
 
   @Transactional

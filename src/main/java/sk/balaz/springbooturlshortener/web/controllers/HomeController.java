@@ -94,6 +94,18 @@ public class HomeController {
     return "login";
   }
 
+  @GetMapping("/my-urls")
+  public String myUrls(
+    @RequestParam(defaultValue = "0") Integer page,
+    Model model) {
+    var currentUserId = securityUtils.getCurrentUserId();
+    PagedResult<ShortUrlDto> urls =
+      shortUrlService.getUserShortUrls(currentUserId, page, properties.pageSize());
+    model.addAttribute("shortUrls", urls);
+    model.addAttribute("baseUrl", properties.baseUrl());
+    return "my-urls";
+  }
+
   private void addShortUrlsDataToModel(Model model, int pageNo) {
     PagedResult<ShortUrlDto> shortUrls = shortUrlService.getAllShortUrls(pageNo, properties.pageSize());
     model.addAttribute("shortUrls", shortUrls);
