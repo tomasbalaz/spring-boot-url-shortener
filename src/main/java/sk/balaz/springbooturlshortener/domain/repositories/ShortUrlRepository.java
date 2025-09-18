@@ -4,9 +4,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import sk.balaz.springbooturlshortener.domain.entities.ShortUrl;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ShortUrlRepository extends JpaRepository<ShortUrl, Long> {
@@ -23,4 +25,7 @@ public interface ShortUrlRepository extends JpaRepository<ShortUrl, Long> {
   Optional<ShortUrl> findByShortKey(String shortKey);
 
   Page<ShortUrl> findByCreatedById(Long userId, Pageable pageable);
+
+  @Modifying
+  void deleteByIdInAndCreatedById(List<Long> ids, Long userId);
 }

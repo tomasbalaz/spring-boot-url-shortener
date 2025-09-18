@@ -16,6 +16,7 @@ import sk.balaz.springbooturlshortener.domain.repositories.ShortUrlRepository;
 
 import java.security.SecureRandom;
 import java.time.Instant;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -126,5 +127,12 @@ public class ShortUrlService {
     shortUrl.setClickCount(shortUrl.getClickCount() + 1);
     shortUrlRepository.save(shortUrl);
     return shortUrlOptional.map(entityMapper::toShortUrlDto);
+  }
+
+  @Transactional
+  public void deleteAllShortUrl(List<Long> ids, Long userId) {
+    if (ids != null && ids.isEmpty() && userId != null) {
+      shortUrlRepository.deleteByIdInAndCreatedById(ids, userId);
+    }
   }
 }

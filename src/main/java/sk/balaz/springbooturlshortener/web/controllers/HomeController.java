@@ -18,6 +18,7 @@ import sk.balaz.springbooturlshortener.domain.services.ShortUrlService;
 import sk.balaz.springbooturlshortener.web.dtos.CreateShortUrlForm;
 
 import jakarta.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -47,6 +48,7 @@ public class HomeController {
 //    Pageable pageable,
     Model model) {
     addShortUrlsDataToModel(model, page);
+    model.addAttribute("paginationUrl", "/");
     model.addAttribute("createShortUrlForm", new CreateShortUrlForm("", false, null));
     return "index";
   }
@@ -103,7 +105,26 @@ public class HomeController {
       shortUrlService.getUserShortUrls(currentUserId, page, properties.pageSize());
     model.addAttribute("shortUrls", urls);
     model.addAttribute("baseUrl", properties.baseUrl());
+    model.addAttribute("paginationUrl", "/my-urls");
     return "my-urls";
+  }
+
+  @PostMapping("/delete-urls")
+  public String deleteUrl(
+    @RequestParam(value = "ids", required = false) List<Long> ids,
+    RedirectAttributes  redirectAttributes) {
+    if (ids == null ||  ids.isEmpty()) {
+      redirectAttributes.addFlashAttribute("errorMessage", "No URL selected for deletion");
+      return "redirect:/my-urls";
+    }
+    try {
+      var currentUserId = securityUtils.getCurrentUserId();
+      shortUrlService.deleteAllShortUrl(ids, currentUserId);
+      redirectAttributes.addFlashAttribute("successMessage", "Selected URLS have been deleted successfully");
+    } catch (Exception e) {
+      redirectAttributes.addFlashAttribute("errorMessage", "Error while deleting URLs : " + e.getMessage());
+    }
+    return "redirect:/my-urls";
   }
 
   private void addShortUrlsDataToModel(Model model, int pageNo) {
