@@ -18,7 +18,7 @@ public interface ShortUrlRepository extends JpaRepository<ShortUrl, Long> {
   //@Query("select su from ShortUrl su left join fetch su.createdBy where su.isPrivate = false order by su.createdAt desc")
   @Query("select su from ShortUrl su where su.isPrivate = false")
   @EntityGraph(attributePaths = {"createdBy"})
-  Page<ShortUrl> findPublicShortUrls(Pageable request);
+  Page<ShortUrl> findPublicShortUrls(Pageable pageable);
 
   boolean existsByShortKey(String shortKey);
 
@@ -28,4 +28,7 @@ public interface ShortUrlRepository extends JpaRepository<ShortUrl, Long> {
 
   @Modifying
   void deleteByIdInAndCreatedById(List<Long> ids, Long userId);
+
+  @Query("select u from ShortUrl u left join fetch u.createdBy")
+  Page<ShortUrl> findAllShortUrls(Pageable pageable);
 }
