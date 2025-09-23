@@ -4,7 +4,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import sk.balaz.springbooturlshortener.domain.entities.User;
-import sk.balaz.springbooturlshortener.domain.entities.UserRepository;
+import sk.balaz.springbooturlshortener.domain.repositories.UserRepository;
 
 @Service
 public class SecurityUtils {

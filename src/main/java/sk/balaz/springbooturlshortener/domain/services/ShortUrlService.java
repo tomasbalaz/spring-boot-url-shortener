@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sk.balaz.springbooturlshortener.ApplicationProperties;
 import sk.balaz.springbooturlshortener.domain.entities.ShortUrl;
-import sk.balaz.springbooturlshortener.domain.entities.UserRepository;
+import sk.balaz.springbooturlshortener.domain.repositories.UserRepository;
 import sk.balaz.springbooturlshortener.domain.models.CreateShortUrlCmd;
 import sk.balaz.springbooturlshortener.domain.models.PagedResult;
 import sk.balaz.springbooturlshortener.domain.models.ShortUrlDto;
@@ -80,7 +80,7 @@ public class ShortUrlService {
       shortUrl.setExpiresAt(Instant.now().plus(properties.expiryInDays(), DAYS));
     }
     else {
-      shortUrl.setCreatedBy(userRepository.findById(cmd.userId()));
+      shortUrl.setCreatedBy(userRepository.findById(cmd.userId()).orElseThrow());
       shortUrl.setIsPrivate(cmd.isPrivate() != null && cmd.isPrivate());
       shortUrl.setExpiresAt(cmd.expirationInDays() != null ? Instant.now().plus(cmd.expirationInDays(), DAYS) : null);
     }

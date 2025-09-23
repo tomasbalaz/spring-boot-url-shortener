@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import sk.balaz.springbooturlshortener.domain.entities.User;
-import sk.balaz.springbooturlshortener.domain.entities.UserRepository;
+import sk.balaz.springbooturlshortener.domain.repositories.UserRepository;
 
 import java.util.List;
 
