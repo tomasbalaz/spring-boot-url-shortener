@@ -90,13 +90,34 @@
 
     </dependencies>
 
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <build>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <image>
+                        <name>tbalaz/${project.artifactId}</name>
+                    </image>
+                </configuration>
             </plugin>
         </plugins>
     </build>
+
+<!--    ./mvnw spring-boot:build-image -Dspring-boot.build-image.imageName=tbalaz/spring-boot-url-shortener -s ./settings.xml-->
+<!--    ./mvnw spring-boot:build-image -s ./settings.xml -->
 
 </project>
